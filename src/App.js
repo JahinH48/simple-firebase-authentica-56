@@ -1,6 +1,6 @@
 
 import './App.css';
-import {getAuth, signInWithPopup ,GoogleAuthProvider ,GithubAuthProvider } from "firebase/auth";
+import {getAuth,signOut , signInWithPopup ,GoogleAuthProvider ,GithubAuthProvider } from "firebase/auth";
 
 
 import initallzeAuthentication from './Firebase/firebase';
@@ -24,10 +24,11 @@ function App() {
     
         const logginUser ={
           name :displayName,
-          email:email,
+          email: email,
           photo : photoURL
         };
         setUser(logginUser);
+        console.log(result.user);
        
     })
     .catch(error =>{
@@ -39,26 +40,38 @@ function App() {
     signInWithPopup(auth , githubProvider)
       .then(result => {
         const { displayName, photoURL, email } = result.user;
-       
-        console.log(result.user);
+      
         const logginUser = {
           name: displayName,
-          email: email,
-          photo: photoURL
+          
+          photo: photoURL,
+          email: email
           
         }
         setUser(logginUser);
       })
   }
+  const GoogleSingOut =()=>{
+    signOut(auth)
+    .then( ()=>{
+      setUser({})
+    })
+  }
   return (
     <div className="App">
 
-      <button onClick={handleGoogleSingIn}>Google Sing In </button>
-      <button onClick={GithubSignIn}>GitHub Sing In</button>
+    {user.name ?
+    <button onClick={GoogleSingOut}>Sing Out</button>:
+       <div>
+       <button onClick={handleGoogleSingIn}>Google Sing In </button>
+        <button onClick={GithubSignIn}>GitHub Sing In</button>
+       </div>
+        
+    }
     <br />
   
     {
-      user.photo && <div>
+      user.name && <div>
         <h2>WellCome {user.name}</h2>
         <p>Email: {user.email}</p>
         <img src={user.photo} alt="" />
